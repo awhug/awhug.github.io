@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+  <meta name="generator" content="Hugo 0.73.0" />
+
+  
+  <meta name="description" content="Some description">
+  
+
+  
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+
+  
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+  
+  <link rel="manifest" href="/site.webmanifest">
+
+  
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+
+  <meta name="msapplication-TileColor" content="#da532c">
+
+  <meta name="theme-color" content="#ffffff">
+
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" />
+
+  
+  <title>Installing PyMC3 and Theano on Windows 10* using WSL | awhug</title>
+  
+
+  <style>
+body {
+  min-width: 300px;
+}
+
+.custom-navbar {
+  margin-bottom: 1em;
+  height: 60px;
+}
+
+.custom-navbar a {
+  display: inline-block; 
+  padding: 18px 0;
+  margin-right: 1em; 
+  font-weight: bold; 
+}
+
+.custom-navbar a:hover,
+.custom-navbar a:focus {
+  text-decoration: none; 
+}
+
+@media print {
+  .custom-navbar {
+    display: none;
+  }
+}
+
+article {
+  padding-bottom: 1em;
+}
+
+img {
+  max-width: 100%;
+}
+
+
+body {
+  background-color: #fff;
+}
+
+
+
+body {
+  color: #212529;
+}
+
+
+
+a {
+  color: #007bff;
+}
+
+
+
+a:hover,
+a:focus {
+  color: #0056b3;
+}
+
+
+
+.custom-navbar {
+  background-color: #212529;
+}
+
+
+
+.custom-navbar a {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+
+
+.custom-navbar a:hover,
+.custom-navbar a:focus {
+  color: rgba(255, 255, 255, 1);
+}
+
+
+
+.container {
+  max-width: 800px;
+}
+
+
+
+pre {
+  display: block;
+  padding: 9.5px;
+  word-break: break-all;
+  word-wrap: break-word;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+pre code {
+  padding: 0;
+  font-size: inherit;
+  color: inherit; 
+  white-space: pre-wrap;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+code {
+  padding: 2px 4px;
+  color: inherit; 
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: .9em;
+}
+
+
+
+blockquote,
+.blockquote {
+  padding: 10px 20px;
+  margin: 0 0 20px;
+  font-size: 1em;
+  border-left: 5px solid #6c757d;
+}
+
+</style>
+  
+  <script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[','\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+});
+</script>
+</head>
+
+<body>
+  <nav class="custom-navbar">
+  <div class="container">
+    
+    <a href="/">Posts</a>
+    
+    <a href="/tags/">Tags</a>
+    
+  </div>
+</nav>
+  
+  <div class="container">
+    <article>
+      <h1>Installing PyMC3 and Theano on Windows 10* using WSL</h1>
+<p>
+  <small class="text-secondary">
+  
+  
+  Jul 10, 2020
+  </small>
+  
+
+<small><code><a href="/tags/pymc3">PyMC3</a></code></small>
+
+
+<small><code><a href="/tags/theano">Theano</a></code></small>
+
+
+<small><code><a href="/tags/wsl">WSL</a></code></small>
+
+</p>
+<p>I really, really like the PyMC3 package for proabilistic programming in Python. It seems to hit a sweet spot of allowing near endless customisation of bespoke Bayesian models, while maintaining relatively concise and readable syntax. It samples super fast, and the PyMC3 community are great.</p>
+<p>The problem is that installing it successfully on Windows 10 can be a serious headache. There seems to be various issues successfully installing the g++ compiler and connecting it with Theano, and/or issues with multiprocessing making sampling incredibly slow (if it runs successfully at all) and limited to one core. Trying to install it last week, I felt I&rsquo;d somehow managed to replicate every Windows-related install error reported across GitHub issues, StackOverflow, and the PyMC3 Discourse!</p>
+<p>The solution for me was to install PyMC3 within Ubuntu using Windows Subsystem for Linux (WSL), thereby bypassing weird errors and conflicts within Windows. I&rsquo;m not overly tech-savvy, so maybe there is a nice way to have an entirely Windows-based solution. I tried so many different ways and for the life of me I couldn&rsquo;t do it!</p>
+<p>Here&rsquo;s the process I used, step by step:</p>
+<h2 id="1-install-wsl-and-ubuntu">1. Install WSL and Ubuntu</h2>
+<p>This is a relatively straight-forward process in itself following <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">Microsoft&rsquo;s own guide</a>, so I won&rsquo;t bother repeating it. Feel free to go with whatever distribution of Linux you prefer, but I stuck with Ubuntu and it&rsquo;s working great.</p>
+<p>If you&rsquo;re able, go ahead and upgrade to WSL2. On my machine some Windows requirements for the ugrade weren&rsquo;t available quite yet, so I&rsquo;m just running WSL1. I skipped the part of their instructions involving this upgrade.</p>
+<h2 id="2-install-g-and-miniconda">2. Install g++ and miniconda</h2>
+<p>Now you&rsquo;ll want to open up Ubuntu and install some pre-requisites: g++ and miniconda. I&rsquo;m not installing a full distribution of Anaconda because it&rsquo;s horribly bloated. Go in either order you like:</p>
+<ul>
+<li><strong>Download g++</strong>: This one&rsquo;s easy. Go for:
+<ul>
+<li><code>sudo apt-get install g++</code></li>
+</ul>
+</li>
+<li><strong>Download and install Miniconda</strong>: Download the latest version of miniconda, install it, and then immediately remove the download in 3 lines using:
+<ul>
+<li><code>wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh</code></li>
+<li><code>bash Miniconda3-latest-Linux-x86_64.sh</code></li>
+<li><code>rm Miniconda3-latest-Linux-x86_64.sh</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="3-create-a-fresh-environment-and-install-your-packages">3. Create a fresh environment and install your packages</h2>
+<p>Strictly speaking, you could just start installing PyMC3 (in the base Miniconda environment) right away.</p>
+<p>But I&rsquo;ve found virtual environments really useful if I mess up my install process or find my package management getting out of hand. You can just delete everything and start again!</p>
+<ul>
+<li><strong>Create and activate a conda virtual environment</strong>: I&rsquo;ve called my virtual environment pm3, but call yours whatever you want.
+<ul>
+<li><code>conda create -n pm3 python</code></li>
+<li><code>conda activate pm3</code></li>
+</ul>
+</li>
+<li><strong>Install packages via conda</strong>: mkl will impove PyMC3&rsquo;s performance immensely so do make sure to grab this in advance. The remaining packages (NumPy, SciPy and Jupyter) are just useful to have installed beforehand, but you can probably skip them at this point if you&rsquo;d like.
+<ul>
+<li><code>conda install mkl-service numpy scipy jupyter</code></li>
+<li><code>conda install -c conda-forge pymc3</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="4-optional-steps-for-jupyter-notebooks">4. Optional Steps for Jupyter Notebooks</h2>
+<p>For data analysis, I mostly work out of Jupyter Notebooks mostly (hence including it in the instructions above). I wanted to get Jupyter working nicely too.</p>
+<p>Full credit here (and above) should go to Emily Kauffman, Prayson Wilfred Daniel &amp; Michael C. Grant <a href="https://gist.github.com/kauffmanes/5e74916617f9993bc3479f401dfec7da">in this GitHub Gist</a> - I&rsquo;m basically just reproducing their instructions.</p>
+<h4 id="4a-set-up-your-browser-to-open-jupyter-automatically">4a. Set up your browser to open Jupyter automatically</h4>
+<p>In Windows, typing &lsquo;jupyter notebook&rsquo; will automatically open it up in your default browser. If you want the same behaviour your Ubuntu-based conda virtual environment, you&rsquo;ll want to:</p>
+<ul>
+<li><strong>Define the browser environment variable</strong>: Make sure this is the path to your browser of choice. I use Firefox, so mine was:
+<ul>
+<li><code>export BROWSER=&quot;/mnt/c/Program Files/Mozilla Firefox/firefox.exe&quot;</code></li>
+</ul>
+</li>
+<li><strong>Set the redirect method</strong>: Basically just adjusting Jupyter&rsquo;s configurations here to redirect effectively:
+<ul>
+<li><code>jupyter notebook --generate-config</code></li>
+<li><code>echo c.NotebookApp.use_redirect_file = False &gt;&gt; ~/.jupyter/jupyter_notebook_config.py</code></li>
+</ul>
+</li>
+</ul>
+<p>Done! Running &lsquo;jupyter notebook&rsquo; in your virtual environment within miniconda should automatically launch it in your browser.</p>
+<h4 id="4b-create-a-symlink-for-your-windows-jupyter-folder-within-ubuntu">4b. Create a symlink for your Windows Jupyter Folder within Ubuntu</h4>
+<p>If you&rsquo;ve got an existing folder where you store your Jupyter Notebooks in Windows, creating a link between this and Ubuntu is really helpful.</p>
+<ul>
+<li><strong>Navigate to Home Directory and set up the link</strong>: Replace the path to your own folder (e.g. &lsquo;/Users/Your_name/Whatever&rsquo;) here, and name the folder whatever you like:
+<ul>
+<li><code>cd ~</code></li>
+<li><code>ln -s /mnt/c/Users/Angus/Documents/Python/Jupyter_Notebooks/ Jupyter_Notebooks</code></li>
+</ul>
+</li>
+</ul>
+<p>You should now see a folder called Jupyter_Notebooks (or whatever you called it) when Jupyter opens!</p>
+<hr>
+
+    </article>
+  </div>
+
+  
+  
+  
+  <script>
+  window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+  ga('create', 'UA-123456789-1', 'auto');
+  ga('send', 'pageview');
+  </script>
+  <script async src='https://www.google-analytics.com/analytics.js'></script>
+  
+
+  
+
+  
+</body>
+
+</html>

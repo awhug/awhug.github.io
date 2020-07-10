@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on awhug</title>
+    <link>/post/</link>
+    <description>Recent content in Posts on awhug</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 10 Jul 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Installing PyMC3 and Theano on Windows 10* using WSL</title>
+      <link>/2020-07-10-installing-pymc3-and-theano-on-windows-10-with-wsl/</link>
+      <pubDate>Fri, 10 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020-07-10-installing-pymc3-and-theano-on-windows-10-with-wsl/</guid>
+      <description>I really, really like the PyMC3 package for proabilistic programming in Python. It seems to hit a sweet spot of allowing near endless customisation of bespoke Bayesian models, while maintaining relatively concise and readable syntax. It samples super fast, and the PyMC3 community are great.
+The problem is that installing it successfully on Windows 10 can be a serious headache. There seems to be various issues successfully installing the g++ compiler and connecting it with Theano, and/or issues with multiprocessing making sampling incredibly slow (if it runs successfully at all) and limited to one core.</description>
+    </item>
+    
+  </channel>
+</rss>
